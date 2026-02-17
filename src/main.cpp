@@ -302,6 +302,14 @@ void loop() {
         }
       } else if (fabs(rotation_speed) < gyro_threshold / 2 && is_rotating) {
         is_rotating = false;
+        Serial.printf("Rotation stopped. Speed: %.2f deg/s\n", rotation_speed);
+      }
+
+      // Debug: Log when rotation starts (but only once when state changes)
+      static bool last_rotating_state = false;
+      if (is_rotating != last_rotating_state) {
+        last_rotating_state = is_rotating;
+        Serial.printf("is_rotating state changed to: %d (speed: %.2f deg/s)\n", is_rotating, rotation_speed);
       }
 
       if (debug_mode) {

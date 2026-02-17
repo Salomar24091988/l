@@ -600,6 +600,24 @@ void elegantOTATask(void *parameter) {
     html += "                </div>";
     request->send(200, "text/html", html);
   });
+  // Accelerometer status endpoint for wifi_config.html (captive portal mode)
+  server.on("/accelerometer-status-wifi", HTTP_GET, [](AsyncWebServerRequest *request) {
+    // Monitoring: Log when endpoint is called and current status
+    Serial.printf("HTMX accelerometer-status-wifi endpoint called. is_rotating: %d\n", is_rotating);
+
+    String html = "<div id=\"accelerometer-wifi\" hx-get=\"/accelerometer-status-wifi\" hx-trigger=\"every 2s\" hx-swap=\"outerHTML\">\n";
+    html += "                <div class=\"accelerometer-indicator\">\n";
+    html += "                    <div class=\"accelerometer-label\">Accelerometer:</div>\n";
+    html += "                    <div class=\"accelerometer-value\">";
+    html += is_rotating ? "Spinning" : "Stopped";
+    html += "</div>\n";
+    html += "                    <div class=\"accelerometer-status ";
+    html += is_rotating ? "accelerometer-orange" : "accelerometer-green";
+    html += "\"></div>\n";
+    html += "                </div>\n";
+    html += "            </div>";
+    request->send(200, "text/html", html);
+  });
   
   // Save WiFi settings endpoint
   server.on("/save", HTTP_POST, [](AsyncWebServerRequest *request) {
