@@ -233,7 +233,7 @@ bool initWiFi() {
 // ElegantOTA Task (combines web server and OTA)
 // ============================================================================
 
-// HTML for WiFi configuration page
+// HTML for WiFi configuration page - backup only!! using data/wifi_config.html
 String getWiFiConfigHTML() {
   String html = R"rawliteral(
 <!DOCTYPE html>
