@@ -305,12 +305,13 @@ void loop() {
       }
 
       if (debug_mode) {
-        char debug_data[256];
-        snprintf(debug_data, sizeof(debug_data), 
-                 "Gyro: X:%.2f Y:%.2f Z:%.2f | Rot: %d | Still: %lums", 
-                 g.gyro.x, g.gyro.y, g.gyro.z,
-                 is_rotating, millis() - last_movement_time);
-        Serial.println(debug_data);
+        // Commented out continuous monitoring to reduce serial output
+        // char debug_data[256];
+        // snprintf(debug_data, sizeof(debug_data), 
+        //          "Gyro: X:%.2f Y:%.2f Z:%.2f | Rot: %d | Still: %lums", 
+        //          g.gyro.x, g.gyro.y, g.gyro.z,
+        //          is_rotating, millis() - last_movement_time);
+        // Serial.println(debug_data);
       }
     }
   }

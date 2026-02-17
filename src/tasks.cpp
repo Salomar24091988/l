@@ -586,6 +586,9 @@ void elegantOTATask(void *parameter) {
   });
   // Accelerometer status endpoint for HTMX polling
   server.on("/accelerometer-status", HTTP_GET, [](AsyncWebServerRequest *request) {
+    // Monitoring: Log when endpoint is called and current status
+    Serial.printf("HTMX accelerometer-status endpoint called. is_rotating: %d\n", is_rotating);
+    
     String html = "<div class=\"status-item\" id=\"accelerometer-status\" hx-get=\"/accelerometer-status\" hx-trigger=\"every 2s\" hx-swap=\"outerHTML\">\n";
     html += "                    <span class=\"status-label\">Accelerometer:</span>\n";
     html += "                    <span class=\"status-value\">";
