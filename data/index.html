@@ -88,7 +88,23 @@
             margin-top: 0;
             color: #333;
         }
+        .accelerometer-status {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        .accelerometer-green {
+            background-color: #28a745;
+        }
+        .accelerometer-orange {
+            background-color: #fd7e14;
+        }
     </style>
+    <script src="/cdn.min.js" defer></script>
+    <script src="/htmx.min.js"></script>
 </head>
 <body>
     <div class="card">
@@ -112,6 +128,11 @@
                 <div class="status-item">
                     <span class="status-label">Patterns Loaded:</span>
                     <span id="patternsLoaded" class="status-value">Loading...</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Accelerometer:</span>
+                    <span class="status-value">%ACCELEROMETER_TEXT%</span>
+                    <div class="accelerometer-status %ACCELEROMETER_CLASS%"></div>
                 </div>
             </div>
         </div>

@@ -482,6 +482,17 @@ String getWiFiConfigHTML() {
   return html;
 }
 
+// Template processor for index.html
+String processor(const String& var) {
+  if (var == "ACCELEROMETER_TEXT") {
+    return is_rotating ? "Spinning" : "Stopped";
+  }
+  if (var == "ACCELEROMETER_CLASS") {
+    return is_rotating ? "accelerometer-orange" : "accelerometer-green";
+  }
+  return String(); // Return empty string if variable not found
+}
+
 // ElegantOTA callbacks
 void onOTAStart() {
   Serial.println("OTA update started!");
@@ -521,7 +532,7 @@ void elegantOTATask(void *parameter) {
     } else {
       // Normal mode: serve status page
       if (LittleFS.exists("/index.html")) {
-        request->send(LittleFS, "/index.html", "text/html");
+        request->send(LittleFS, "/index.html", "text/html", false, processor);
       } else {
         // Fallback to simple status page
         String html = "<html><body><h1>ESP32 Accelerometer</h1><p>WiFi: ";
@@ -645,6 +656,8 @@ void elegantOTATask(void *parameter) {
       request->send(400, "text/plain", "Missing parameter");
     }
   });
+  // Static file handler for JavaScript libraries (Alpine.js, htmx)
+  server.serveStatic("/", LittleFS, "/");
   
   // 404 handler - redirect to root for captive portal, otherwise send 404
   server.onNotFound([](AsyncWebServerRequest *request) {

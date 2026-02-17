@@ -46,3 +46,6 @@ void resetWiFiSettings();
 bool initLittleFS();
 String readFile(const char* path);
 bool writeFile(const char* path, const String& content);
+
+// Template processor for index.html
+String processor(const String& var);
