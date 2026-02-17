@@ -21,7 +21,7 @@ extern int patternCount;
 extern int currentPatternIndex;
 extern bool patternsLoaded;
 
-extern bool is_rotating;
+extern volatile bool is_rotating;
 extern float gyro_threshold;
 extern unsigned long last_movement_time;
 extern unsigned long last_watchdog_feed;
@@ -587,35 +587,39 @@ void elegantOTATask(void *parameter) {
   // Accelerometer status endpoint for HTMX polling
   server.on("/accelerometer-status", HTTP_GET, [](AsyncWebServerRequest *request) {
     // Monitoring: Log when endpoint is called and current status
-    Serial.printf("HTMX accelerometer-status endpoint called. is_rotating: %d\n", is_rotating);
+    bool rotating_state = is_rotating; // read once
+    Serial.printf("HTMX accelerometer-status endpoint called. is_rotating: %d (raw: %d)\n", rotating_state, is_rotating);
     
     String html = "<div class=\"status-item\" id=\"accelerometer-status\" hx-get=\"/accelerometer-status\" hx-trigger=\"every 2s\" hx-swap=\"outerHTML\">\n";
     html += "                    <span class=\"status-label\">Accelerometer:</span>\n";
     html += "                    <span class=\"status-value\">";
-    html += is_rotating ? "Spinning" : "Stopped";
+    html += rotating_state ? "Spinning" : "Stopped";
     html += "</span>\n";
     html += "                    <div class=\"accelerometer-status ";
-    html += is_rotating ? "accelerometer-orange" : "accelerometer-green";
+    html += rotating_state ? "accelerometer-orange" : "accelerometer-green";
     html += "\"></div>\n";
     html += "                </div>";
+    Serial.printf("Returning HTML with status: %s\n", rotating_state ? "Spinning" : "Stopped");
     request->send(200, "text/html", html);
   });
   // Accelerometer status endpoint for wifi_config.html (captive portal mode)
   server.on("/accelerometer-status-wifi", HTTP_GET, [](AsyncWebServerRequest *request) {
     // Monitoring: Log when endpoint is called and current status
-    Serial.printf("HTMX accelerometer-status-wifi endpoint called. is_rotating: %d\n", is_rotating);
+    bool rotating_state = is_rotating; // read once
+    Serial.printf("HTMX accelerometer-status-wifi endpoint called. is_rotating: %d (raw: %d)\n", rotating_state, is_rotating);
 
     String html = "<div id=\"accelerometer-wifi\" hx-get=\"/accelerometer-status-wifi\" hx-trigger=\"every 2s\" hx-swap=\"outerHTML\">\n";
     html += "                <div class=\"accelerometer-indicator\">\n";
     html += "                    <div class=\"accelerometer-label\">Accelerometer:</div>\n";
     html += "                    <div class=\"accelerometer-value\">";
-    html += is_rotating ? "Spinning" : "Stopped";
+    html += rotating_state ? "Spinning" : "Stopped";
     html += "</div>\n";
     html += "                    <div class=\"accelerometer-status ";
-    html += is_rotating ? "accelerometer-orange" : "accelerometer-green";
+    html += rotating_state ? "accelerometer-orange" : "accelerometer-green";
     html += "\"></div>\n";
     html += "                </div>\n";
     html += "            </div>";
+    Serial.printf("Returning HTML with status: %s\n", rotating_state ? "Spinning" : "Stopped");
     request->send(200, "text/html", html);
   });
   
@@ -690,7 +694,37 @@ void elegantOTATask(void *parameter) {
       request->send(400, "text/plain", "Missing parameter");
     }
   });
-  // Static file handler for JavaScript libraries (Alpine.js, htmx)
+  // Explicit routes for JavaScript libraries to ensure they work in captive portal mode
+  server.on("/htmx.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+    // Debug logging
+    Serial.printf("HTMX.js request - Accept-Encoding: %s, captivePortalActive: %d\n", 
+                  request->header("Accept-Encoding").c_str(), captivePortalActive);
+    
+    // Check if client accepts gzip encoding and if compressed file exists
+    if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/htmx.min.js.gz")) {
+      Serial.println("Serving gzipped htmx.min.js");
+      request->send(LittleFS, "/htmx.min.js.gz", "application/javascript", true); // true = isGzip
+    } else {
+      Serial.println("Serving regular htmx.min.js");
+      request->send(LittleFS, "/htmx.min.js", "application/javascript");
+    }
+  });
+  
+  server.on("/cdn.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+    // Debug logging
+    Serial.printf("Alpine.js request - Accept-Encoding: %s, captivePortalActive: %d\n", 
+                  request->header("Accept-Encoding").c_str(), captivePortalActive);
+    
+    if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/cdn.min.js.gz")) {
+      Serial.println("Serving gzipped cdn.min.js");
+      request->send(LittleFS, "/cdn.min.js.gz", "application/javascript", true);
+    } else {
+      Serial.println("Serving regular cdn.min.js");
+      request->send(LittleFS, "/cdn.min.js", "application/javascript");
+    }
+  });
+  
+  // Static file handler for all other files (Alpine.js, htmx)
   server.serveStatic("/", LittleFS, "/");
   
   // 404 handler - redirect to root for captive portal, otherwise send 404

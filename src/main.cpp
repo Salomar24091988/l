@@ -41,8 +41,8 @@ bool patternSentForCurrentPause = false; // Track if pattern already sent for cu
 
 
 
-// Rotation detection
-bool is_rotating = false;
+// Rotation detection - marked volatile for multi-threaded access
+volatile bool is_rotating = false;
 float gyro_threshold = 200.0;  // Increased threshold to ignore tiny jiggles
 unsigned long last_movement_time = 0;  // Track last movement detection
 

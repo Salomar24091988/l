@@ -25,6 +25,9 @@ extern WiFiSettings wifiSettings;
 extern bool otaInProgress;
 extern bool captivePortalActive;
 
+extern volatile bool is_rotating;
+extern float gyro_threshold;
+
 // DNS server constants
 extern const byte DNS_PORT;
 extern IPAddress apIP;
