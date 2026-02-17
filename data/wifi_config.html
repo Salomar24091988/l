@@ -67,6 +67,44 @@
             display: block;
         }
         
+        .accelerometer-status {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        .accelerometer-green {
+            background-color: #28a745;
+        }
+        
+        .accelerometer-orange {
+            background-color: #fd7e14;
+        }
+        
+        .accelerometer-indicator {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .accelerometer-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .accelerometer-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
         .network-group {
             margin-bottom: 28px;
             padding: 20px;
@@ -238,6 +276,12 @@
             <p class="subtitle">Configure up to 3 WiFi networks. Device tries them in order. Fallback uses secrets.h.</p>
             
             <div id="status" class="status"></div>
+            
+            <div class="accelerometer-indicator">
+                <div class="accelerometer-label">Accelerometer:</div>
+                <div class="accelerometer-value">%ACCELEROMETER_TEXT%</div>
+                <div class="accelerometer-status %ACCELEROMETER_CLASS%"></div>
+            </div>
             
             <form id="wifiForm">
                 <div class="form-group">

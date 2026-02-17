@@ -525,7 +525,7 @@ void elegantOTATask(void *parameter) {
     if (captivePortalActive) {
       // When in captive portal mode, serve WiFi config page
       if (LittleFS.exists("/wifi_config.html")) {
-        request->send(LittleFS, "/wifi_config.html", "text/html");
+        request->send(LittleFS, "/wifi_config.html", "text/html", false, processor);
       } else {
         request->send(200, "text/html", getWiFiConfigHTML());
       }
@@ -546,7 +546,7 @@ void elegantOTATask(void *parameter) {
   // Serve WiFi configuration page
   server.on("/config", HTTP_GET, [](AsyncWebServerRequest *request) {
     if (LittleFS.exists("/wifi_config.html")) {
-      request->send(LittleFS, "/wifi_config.html", "text/html");
+      request->send(LittleFS, "/wifi_config.html", "text/html", false, processor);
     } else {
       request->send(200, "text/html", getWiFiConfigHTML());
     }
