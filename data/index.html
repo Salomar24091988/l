@@ -129,7 +129,7 @@
                     <span class="status-label">Patterns Loaded:</span>
                     <span id="patternsLoaded" class="status-value">Loading...</span>
                 </div>
-                <div class="status-item">
+                <div class="status-item" id="accelerometer-status" hx-get="/accelerometer-status" hx-trigger="every 2s" hx-swap="outerHTML">
                     <span class="status-label">Accelerometer:</span>
                     <span class="status-value">%ACCELEROMETER_TEXT%</span>
                     <div class="accelerometer-status %ACCELEROMETER_CLASS%"></div>

@@ -584,6 +584,19 @@ void elegantOTATask(void *parameter) {
     serializeJson(doc, jsonStr);
     request->send(200, "application/json", jsonStr);
   });
+  // Accelerometer status endpoint for HTMX polling
+  server.on("/accelerometer-status", HTTP_GET, [](AsyncWebServerRequest *request) {
+    String html = "<div class=\"status-item\" id=\"accelerometer-status\" hx-get=\"/accelerometer-status\" hx-trigger=\"every 2s\" hx-swap=\"outerHTML\">\n";
+    html += "                    <span class=\"status-label\">Accelerometer:</span>\n";
+    html += "                    <span class=\"status-value\">";
+    html += is_rotating ? "Spinning" : "Stopped";
+    html += "</span>\n";
+    html += "                    <div class=\"accelerometer-status ";
+    html += is_rotating ? "accelerometer-orange" : "accelerometer-green";
+    html += "\"></div>\n";
+    html += "                </div>";
+    request->send(200, "text/html", html);
+  });
   
   // Save WiFi settings endpoint
   server.on("/save", HTTP_POST, [](AsyncWebServerRequest *request) {
