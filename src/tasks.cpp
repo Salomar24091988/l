@@ -700,28 +700,34 @@ void elegantOTATask(void *parameter) {
     Serial.printf("HTMX.js request - Accept-Encoding: %s, captivePortalActive: %d\n", 
                   request->header("Accept-Encoding").c_str(), captivePortalActive);
     
-    // Check if client accepts gzip encoding and if compressed file exists
-    // if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/htmx.min.js.gz")) {
-      Serial.println("Serving gzipped htmx.min.js");
-      request->send(LittleFS, "/htmx.min.js.gz", "application/javascript", true); // true = isGzip
-    // } else {
-    //   Serial.println("Serving regular htmx.min.js");
-    //   request->send(LittleFS, "/htmx.min.js", "application/javascript");
-    // }
+    // Always serve gzipped version since that's all we have
+    if (LittleFS.exists("/htmx.min.js.gz")) {
+      Serial.println("Serving gzipped htmx.min.js with explicit Content-Encoding header");
+      // Create response with explicit Content-Encoding header
+      AsyncWebServerResponse *response = request->beginResponse(LittleFS, "/htmx.min.js.gz", "application/javascript");
+      response->addHeader("Content-Encoding", "gzip");
+      request->send(response);
+    } else {
+      Serial.println("ERROR: htmx.min.js.gz not found in LittleFS");
+      request->send(404, "text/plain", "htmx.min.js.gz not found");
+    }
   });
-  
   server.on("/cdn.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
     // Debug logging
     Serial.printf("Alpine.js request - Accept-Encoding: %s, captivePortalActive: %d\n", 
                   request->header("Accept-Encoding").c_str(), captivePortalActive);
     
-    // if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/cdn.min.js.gz")) {
-      Serial.println("Serving gzipped cdn.min.js");
-      request->send(LittleFS, "/cdn.min.js.gz", "application/javascript", true);
-    // } else {
-    //   Serial.println("Serving regular cdn.min.js");
-    //   request->send(LittleFS, "/cdn.min.js", "application/javascript");
-    // }
+    // Always serve gzipped version since that's all we have
+    if (LittleFS.exists("/cdn.min.js.gz")) {
+      Serial.println("Serving gzipped cdn.min.js with explicit Content-Encoding header");
+      // Create response with explicit Content-Encoding header
+      AsyncWebServerResponse *response = request->beginResponse(LittleFS, "/cdn.min.js.gz", "application/javascript");
+      response->addHeader("Content-Encoding", "gzip");
+      request->send(response);
+    } else {
+      Serial.println("ERROR: cdn.min.js.gz not found in LittleFS");
+      request->send(404, "text/plain", "cdn.min.js.gz not found");
+    }
   });
   
   // Static file handler for all other files (Alpine.js, htmx)
