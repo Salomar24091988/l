@@ -701,13 +701,13 @@ void elegantOTATask(void *parameter) {
                   request->header("Accept-Encoding").c_str(), captivePortalActive);
     
     // Check if client accepts gzip encoding and if compressed file exists
-    if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/htmx.min.js.gz")) {
+    // if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/htmx.min.js.gz")) {
       Serial.println("Serving gzipped htmx.min.js");
       request->send(LittleFS, "/htmx.min.js.gz", "application/javascript", true); // true = isGzip
-    } else {
-      Serial.println("Serving regular htmx.min.js");
-      request->send(LittleFS, "/htmx.min.js", "application/javascript");
-    }
+    // } else {
+    //   Serial.println("Serving regular htmx.min.js");
+    //   request->send(LittleFS, "/htmx.min.js", "application/javascript");
+    // }
   });
   
   server.on("/cdn.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -715,13 +715,13 @@ void elegantOTATask(void *parameter) {
     Serial.printf("Alpine.js request - Accept-Encoding: %s, captivePortalActive: %d\n", 
                   request->header("Accept-Encoding").c_str(), captivePortalActive);
     
-    if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/cdn.min.js.gz")) {
+    // if (request->header("Accept-Encoding").indexOf("gzip") >= 0 && LittleFS.exists("/cdn.min.js.gz")) {
       Serial.println("Serving gzipped cdn.min.js");
       request->send(LittleFS, "/cdn.min.js.gz", "application/javascript", true);
-    } else {
-      Serial.println("Serving regular cdn.min.js");
-      request->send(LittleFS, "/cdn.min.js", "application/javascript");
-    }
+    // } else {
+    //   Serial.println("Serving regular cdn.min.js");
+    //   request->send(LittleFS, "/cdn.min.js", "application/javascript");
+    // }
   });
   
   // Static file handler for all other files (Alpine.js, htmx)
