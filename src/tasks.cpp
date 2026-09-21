@@ -1,7 +1,12 @@
 #include <Arduino.h>
 #include <Adafruit_MPU6050.h>
 #include "tasks.h"
-#include <WiFi.h>
+#if defined(ESP32)
+  #include <WiFi.h>
+#else
+  #include <ESP8266WiFi.h>
+  #include <ESPAsyncTCP.h>
+#endif
 #include <LittleFS.h>
 #include <ESPAsyncWebServer.h>
 #include <ElegantOTA.h>
@@ -33,9 +38,10 @@ extern bool loadPatterns();
 extern void sendPatternRequest(int patternNumber);
 
 // DNS server IP (captive portal)
-const byte DNS_PORT = 53;
-IPAddress apIP(192, 168, 4, 1);
-IPAddress netMask(255, 255, 255, 0);
+// Defined in main.cpp so both translation units see the same values
+extern const byte DNS_PORT;
+extern IPAddress apIP;
+extern IPAddress netMask;
 
 // ============================================================================
 // LittleFS Helpers
@@ -59,7 +65,11 @@ String getContentType(String filename) {
 }
 
 bool initLittleFS() {
+#if defined(ESP32)
   if (!LittleFS.begin(true)) {
+#else
+  if (!LittleFS.begin()) {
+#endif
     Serial.println("LittleFS Mount Failed");
     return false;
   }
@@ -516,8 +526,8 @@ void onOTAEnd(bool success) {
   otaInProgress = false;
 }
 
-void elegantOTATask(void *parameter) {
-  Serial.println("ElegantOTA task started");
+void setupWebServer() {
+  Serial.println("Setting up web server");
   
   // Setup web server routes
   // Serve index.html (status page) at root
@@ -579,7 +589,11 @@ void elegantOTATask(void *parameter) {
     doc["ipAddress"] = WiFi.localIP().toString();
     doc["macAddress"] = WiFi.macAddress();
     doc["freeHeap"] = ESP.getFreeHeap();
+#if defined(ESP32)
     doc["chipModel"] = ESP.getChipModel();
+#else
+    doc["chipModel"] = "ESP8266";
+#endif
     String jsonStr;
     serializeJson(doc, jsonStr);
     request->send(200, "application/json", jsonStr);
@@ -750,13 +764,29 @@ void elegantOTATask(void *parameter) {
   
   server.begin();
   Serial.println("Web server started");
-  
-  // Main task loop
+}
+
+// Per-iteration web server servicing: called from the FreeRTOS task on ESP32,
+// from loop() on ESP8266.
+void webServerLoop() {
+  ElegantOTA.loop();
+  if (captivePortalActive) {
+    dnsServer.processNextRequest();
+  }
+#if defined(ESP32)
+  vTaskDelay(pdMS_TO_TICKS(10)); // 10ms delay
+#else
+  delay(10);
+#endif
+}
+
+#if defined(ESP32)
+// FreeRTOS task wrapper (ESP32 only): sets up once, then services forever
+void elegantOTATask(void *parameter) {
+  Serial.println("ElegantOTA task started");
+  setupWebServer();
   for (;;) {
-    ElegantOTA.loop();
-    if (captivePortalActive) {
-      dnsServer.processNextRequest();
-    }
-    vTaskDelay(pdMS_TO_TICKS(10)); // 10ms delay
+    webServerLoop();
   }
 }
+#endif

@@ -1,10 +1,17 @@
 #pragma once
 
 #include <Arduino.h>
+#if defined(ESP32)
+  #include <WiFi.h>
+#else
+  #include <ESP8266WiFi.h>
+#endif
 #include "secrets.h"
 
-// FreeRTOS task handles
+// FreeRTOS task handles (ESP32 only)
+#if defined(ESP32)
 extern TaskHandle_t elegantOTATaskHandle;
+#endif
 
 // WiFi configuration structure
 struct WiFiConfig {
@@ -34,7 +41,13 @@ extern IPAddress apIP;
 extern IPAddress netMask;
 
 // Task declarations
+#if defined(ESP32)
 void elegantOTATask(void *parameter);
+#endif
+
+// Web server setup + per-iteration servicing (platform-neutral)
+void setupWebServer();
+void webServerLoop();
 
 // WiFi management functions
 bool initWiFi();

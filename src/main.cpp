@@ -6,14 +6,20 @@
 #include "tasks.h"
 #include <ArduinoJson.h>
 
-// ESP32-specific includes
-#include <WiFi.h>
-#include <HTTPClient.h>
-#include <esp_system.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/task.h>
-#include <freertos/semphr.h>
-#include <AsyncTCP.h>
+// Platform-specific includes (works on ESP32 and ESP8266)
+#if defined(ESP32)
+  #include <WiFi.h>
+  #include <HTTPClient.h>
+  #include <esp_system.h>
+  #include <freertos/FreeRTOS.h>
+  #include <freertos/task.h>
+  #include <freertos/semphr.h>
+  #include <AsyncTCP.h>
+#else
+  #include <ESP8266WiFi.h>
+  #include <ESP8266HTTPClient.h>
+  #include <ESPAsyncTCP.h>
+#endif
 #include <ESPAsyncWebServer.h>
 #include <ElegantOTA.h>
 #include <LittleFS.h>
@@ -50,13 +56,20 @@ unsigned long last_movement_time = 0;  // Track last movement detection
 unsigned long last_watchdog_feed = 0;
 bool mpu_initialized = false;
 
-// FreeRTOS task handles
+// FreeRTOS task handles (ESP32 only)
+#if defined(ESP32)
 TaskHandle_t elegantOTATaskHandle = NULL;
+#endif
 
 // WiFi settings
 WiFiSettings wifiSettings;
 bool otaInProgress = false;
 bool captivePortalActive = false;
+
+// DNS server IP (captive portal)
+const byte DNS_PORT = 53;
+IPAddress apIP(192, 168, 4, 1);
+IPAddress netMask(255, 255, 255, 0);
 
 // Web server instances
 AsyncWebServer server(80);
@@ -65,7 +78,7 @@ DNSServer dnsServer;
 // Watchdog timer callback
 void watchdogCallback() {
   if (millis() - last_watchdog_feed > 10000) { // 10 seconds without feeding
-    esp_restart();
+    ESP.restart();
   }
 }
 
@@ -229,6 +242,8 @@ void setup() {
     Serial.println("Captive portal started. Connect to SmartPoi-Accelerometer-Config AP");
   }
 
+  // Start web server + ElegantOTA
+#if defined(ESP32)
   // Create ElegantOTA task (handles both normal and captive portal modes)
   xTaskCreatePinnedToCore(
     elegantOTATask,      // Task function
@@ -239,6 +254,10 @@ void setup() {
     &elegantOTATaskHandle, // Task handle
     1                    // Core (1 = APP_CPU)
   );
+#else
+  // ESP8266 has no FreeRTOS tasks: set up the server and service it from loop()
+  setupWebServer();
+#endif
 
   // Initialize MPU6050
   delay(100); // Wait for the sensor to power up
@@ -345,6 +364,12 @@ void loop() {
     sendPatternRequest(patternNumbers[currentPatternIndex]);
     patternSentForCurrentPause = true;
   }
+
+  // Service the web server / OTA / captive portal on ESP8266
+  // (ESP32 runs this inside its own FreeRTOS task)
+#if !defined(ESP32)
+  webServerLoop();
+#endif
 
   delay(50); // Significantly increased delay to reduce CPU load
   yield(); // Final yield for good measure
