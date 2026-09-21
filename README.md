@@ -1,6 +1,13 @@
 # SmartPoi Accelerometer Controller
 
-This project uses an ESP32 C3 Super Mini board and an MPU-6050 accelerometer to detect "stalls" (pauses in spinning) of SmartPoi devices. When a stall is detected, the controller sends HTTP requests to connected SmartPoi devices to update their display images.
+This project uses a microcontroller (ESP32 C3 or ESP8266) and an MPU-6050 accelerometer to detect "stalls" (pauses in spinning) of SmartPoi devices. When a stall is detected, the controller sends HTTP requests to connected SmartPoi devices to update their display images.
+
+A single codebase supports both platforms — pick the matching environment when building:
+
+| Environment | Board | Platform |
+|---|---|---|
+| `dfrobot_beetle_esp32c3` | DFRobot Beetle ESP32-C3 (also ESP32 C3 Super Mini) | espressif32 (pioarduino) |
+| `d1_mini` | Wemos D1 Mini (ESP8266) | espressif8266 |
 
 ## Features
 
@@ -13,10 +20,11 @@ This project uses an ESP32 C3 Super Mini board and an MPU-6050 accelerometer to 
 - Configurable stall detection thresholds and sensitivity
 - OTA (Over-the-Air) firmware updates via ElegantOTA
 - LittleFS filesystem for persistent configuration storage
+- Dual-platform: same source builds for both ESP32 and ESP8266
 
 ## Hardware
 
-* ESP32 C3 Super Mini board
+* ESP32 C3 Super Mini board **or** Wemos D1 Mini (ESP8266)
 * MPU-6050 Accelerometer
 * Breadboard and jumper wires
 
@@ -34,6 +42,17 @@ Connect the MPU-6050 to the ESP32 C3 Super Mini as follows:
 ![SmartPoi Accelerometer Breadboard](SmartPoi_Accelerometer_Breadboard.png)
 
 *Breadboard layout showing ESP32 C3 Super Mini connected to MPU-6050 accelerometer*
+
+For the Wemos D1 Mini (ESP8266), connect the MPU-6050 as follows:
+
+| MPU-6050 | Wemos D1 Mini |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SCL | D1 (GPIO5) |
+| SDA | D2 (GPIO4) |
+
+The built-in LED (GPIO 2 on the D1 Mini) indicates status: ON after 2 seconds of stillness, OFF while spinning.
 
 
 ## Installation
@@ -66,11 +85,18 @@ Connect the MPU-6050 to the ESP32 C3 Super Mini as follows:
    An example file `secrets_example.txt` is provided in the project root. Rename it to `secrets.cpp`, move it to the `src` directory, and edit with your actual credentials.
 
 4. **Build and Upload:**
-   Connect the ESP32 C3 Super Mini to your computer and run the following command:
-   ```bash
-   platformio run --target upload --target uploadfs
-   ```
-   This will compile the code, upload it to the ESP32 C3 Super Mini, and upload the LittleFS filesystem image. (Or just use PlatformIO "Build" and "Upload", "Build Filesystem" and "Upload Filesystem" if using VSCode IDE with PlatformIO Extension)
+
+   Build for the board you're using by selecting the matching environment (`-e`):
+
+   - **ESP32 C3 (Beetle / Super Mini):**
+     ```bash
+     pio run -e dfrobot_beetle_esp32c3 -t upload -t uploadfs
+     ```
+   - **ESP8266 (Wemos D1 Mini):**
+     ```bash
+     pio run -e d1_mini -t upload -t uploadfs
+     ```
+   This compiles the code, uploads it to the board, and uploads the LittleFS filesystem image (the web UI files in `data/`). Or just use PlatformIO "Build"/"Upload", "Build Filesystem"/"Upload Filesystem" if using the VSCode IDE with the PlatformIO Extension, selecting the environment from the project tasks menu.
 
 ## Usage
 
