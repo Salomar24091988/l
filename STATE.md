@@ -16,6 +16,7 @@
 | Живые команды MA2 на ПК Яна | **MIDI Show Control** вместо Telnet | `%LOCALAPPDATA%\LightDancer\LightDancer_app.exe` |
 | LightDancer Android | **1.1** (с генератором) | `/mnt/project-files/ma_mobile/LightDancer.apk`, исходники `ma_mobile/source/` |
 | MA2 → Capture | **31.10** | `/mnt/project-files/ma2_capture/MA2_Capture.exe` / `.zip` |
+| Снимок на GitHub | 2026.10.31.3 / 1.1 | github.com/Salomar24091988/l → `lightdancer/` (исходники + `builds/`), тег `lightdancer-2026.10.31.3` |
 | Шоу «big fest» для Capture | 228 приборов, пульт 10.0.0.8 | `ma2_capture/big_fest/big_fest.mvr`, `big_fest.csv` |
 
 ⚠ **ПК Яна новее облака.** Генератор (откат) и MSC сделаны в Claude Code на ПК. Облачные `music_analyzer_wheel/ma2_fxgen_gui.py` и `core/ma2_fxgen.py` этого не содержат. Перед правкой генератора или анализатора брать файлы с `D:\l` / `%LOCALAPPDATA%\LightDancer`.
@@ -25,7 +26,7 @@
 2. **Генератор и LightDancer на ПК** — Ян сказал «генератор отдельно». Окончательный вид (отдельное окно / вкладка / ярлык с выбором) не выбран.
 3. **Capture** — проверить импорт `big_fest.mvr` в настоящем Capture.
 4. **Облако ↔ ПК** — забрать актуальный генератор и MSC-сборку с ПК в облако.
-5. **Правило для всех Claude** — смёрджить PR #1 в репозитории l; положить CLAUDE.md в `D:\l` и `~/.claude/` на ПК (нужен подключённый ПК).
+5. **Правило для всех Claude** — положить CLAUDE.md в `D:\l` и `~/.claude/` на ПК (нужен подключённый ПК).
 6. На живом пульте не проверены: генератор после отката, Android-генератор.
 
 ## Треды
@@ -38,4 +39,5 @@
 - **2026-10-31** — Android: LightDancer 1.1 с генератором (команды 1:1 с ПК).
 - **2026-10-31** — Capture: MA2_Capture с патчем по IP, CSV+XML, готовый big_fest.mvr.
 - **2026-10-31** — ПК Яна: генератор откатан к 31.10.1 + кнопки удаления; живые команды MA2 через MSC.
-- **2026-10-31** — создан STATE.md, правило записи изменений; копия STATE.md + CLAUDE.md в репозитории l (PR #1, черновик).
+- **2026-10-31** — создан STATE.md, правило записи изменений; копия STATE.md + CLAUDE.md в репозитории l.
+- **2026-10-31** — снимок LightDancer (ПК 2026.10.31.3, Android 1.1, MA2_Capture) зафиксирован на GitHub: `Salomar24091988/l`, папка `lightdancer/`, тег `lightdancer-2026.10.31.3`.
