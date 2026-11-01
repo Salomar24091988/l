@@ -17,10 +17,10 @@ public final class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        getWindow().setStatusBarColor(0xff000000);
-        getWindow().setNavigationBarColor(0xff000000);
+        getWindow().setStatusBarColor(0xff03070b);
+        getWindow().setNavigationBarColor(0xff03070b);
         FrameLayout f = new FrameLayout(this);
-        f.setBackgroundColor(0xff000000);
+        f.setBackgroundColor(0xff03070b);
         ImageView img = new ImageView(this);
         img.setImageResource(getResources().getIdentifier("splash", "drawable", getPackageName()));
         img.setScaleType(ImageView.ScaleType.FIT_CENTER);

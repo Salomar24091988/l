@@ -8,13 +8,14 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
-/** Стиль LightDancer 1.2: чёрный, белый и ледяной голубой, панели со срезанными углами. */
+/** Стиль LightDancer 1.2: тёмно-бирюзовый фон, циан и оранжевый, панели со срезанными углами. */
 public final class Hud {
 
     private Hud() { }
 
-    public static final int BG = 0xff000000, BG_TOP = 0xff141b26, PANEL = 0xee0a0d12, ICE = 0xff9cc4f0,
-            ICE_LIGHT = 0xffcfe2f8, LINE = 0x479cc4f0, LINE_SOFT = 0x269cc4f0, TEXT = 0xfff2f5f9, DIM = 0xff8e9aab,
+    public static final int BG = 0xff04080c, BG_MID = 0xff07121a, BG_TOP = 0xff0e2a36, PANEL = 0xee07141c, ICE = 0xff22d3ee,
+            ICE_LIGHT = 0xff9be9f7, LINE = 0x4722d3ee, LINE_SOFT = 0x2622d3ee, TEXT = 0xffeaf6fa, DIM = 0xff8fb3c0,
+            ORANGE = 0xffff8a1f, ORANGE_LIGHT = 0xffffb366,
             WHITE = 0xffffffff, GREEN = 0xff34d399, RED = 0xfff87171, RED_LIGHT = 0xfffca5a5, AMBER = 0xfffbbf24;
 
     /** панель со срезанными углами (левый верхний и правый нижний), с обводкой и свечением */

@@ -14,7 +14,7 @@
 | LightDancer ПК (анализатор + генератор + Capture) | **2026.10.31.3** | `/mnt/project-files/music_analyzer_wheel/LightDancer_Setup.exe` (+ `.zip`, `parts/` + `sobrat.bat`) |
 | Генератор эффектов MA2 на ПК Яна | **2026.10.31.1 + «🗑 Удалить выбранные / 🧹 Удалить старые»** | `D:\l\generator`, `%LOCALAPPDATA%\LightDancer\ma2_fxgen_gui.py` |
 | Живые команды MA2 на ПК Яна | **MIDI Show Control** вместо Telnet | `%LOCALAPPDATA%\LightDancer\LightDancer_app.exe` |
-| LightDancer Android | **1.2** (анализатор + генератор, новый дизайн, экран загрузки) | `/mnt/project-files/ma_mobile/LightDancer.apk`, исходники `ma_mobile/source/`, прошлые: `v1.0/`, `v1.1/` |
+| LightDancer Android | **1.2.1** (анализатор + генератор, дизайн HUD циан + оранжевый, лого и иконка в тех же цветах) | `/mnt/project-files/ma_mobile/LightDancer.apk`, исходники `ma_mobile/source/`, лого `ma_mobile/logo/`, прошлые: `v1.0/`, `v1.1/`, `v1.2/` |
 | MA2 → Capture | **31.10** | `/mnt/project-files/ma2_capture/MA2_Capture.exe` / `.zip` |
 | Снимок на GitHub | 2026.10.31.3 / 1.1 | github.com/Salomar24091988/l → `lightdancer/` (исходники + `builds/` ), коммит 05595d6 в main |
 | Шоу «big fest» для Capture | 228 приборов, пульт 10.0.0.8 | `ma2_capture/big_fest/big_fest.mvr`, `big_fest.csv` |
@@ -22,7 +22,7 @@
 ⚠ **ПК Яна новее облака.** Генератор (откат) и MSC сделаны в Claude Code на ПК. Облачные `music_analyzer_wheel/ma2_fxgen_gui.py` и `core/ma2_fxgen.py` этого не содержат. Перед правкой генератора или анализатора брать файлы с `D:\l` / `%LOCALAPPDATA%\LightDancer`.
 
 ## Открыто / ждёт Яна
-1. **Android 1.2** — собран, ждёт проверки Яном на телефоне и пульте.
+1. **Android 1.2.1** — собран, ждёт проверки Яном на телефоне и пульте.
 2. **Генератор и LightDancer на ПК** — Ян сказал «генератор отдельно». Окончательный вид (отдельное окно / вкладка / ярлык с выбором) не выбран.
 3. **Capture** — проверить импорт `big_fest.mvr` в настоящем Capture.
 4. **Облако ↔ ПК** — забрать актуальный генератор и MSC-сборку с ПК в облако.
@@ -35,6 +35,7 @@
 - «Вести файл состояния проекта» — этот файл.
 
 ## Журнал изменений (только итоги)
+- **2026-11-01** — Android: LightDancer 1.2.1. Дизайн по образцу Яна: циан + оранжевый на тёмно-бирюзовом; лого загрузки и иконка перекрашены в те же цвета. Функции как в 1.2.
 - **2026-11-01** — Android: LightDancer 1.2. Автопилот играет эффекты генератора (стр. 11–15, раскладка 1:1 с ПК), дизайн в цветах лого, экран загрузки, 4 вкладки.
 - **2026-10-31** — ПК: LightDancer 2026.10.31.3 (переименование из MusicAnalyzer, свежий Capture, исправлена противофаза).
 - **2026-10-31** — Android: LightDancer 1.1 с генератором (команды 1:1 с ПК).

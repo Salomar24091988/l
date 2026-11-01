@@ -40,7 +40,7 @@ public abstract class BaseActivity extends Activity {
         dp = getResources().getDisplayMetrics().density;
         engine = Engine.get(this);
         getWindow().setStatusBarColor(Hud.BG_TOP);
-        getWindow().setNavigationBarColor(0xff080a0e);
+        getWindow().setNavigationBarColor(0xff04080c);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                 | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
@@ -50,7 +50,7 @@ public abstract class BaseActivity extends Activity {
         this.tab = tab;
         FrameLayout frame = new FrameLayout(this);
         GradientDrawable bg = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Hud.BG_TOP, 0xff06080c, Hud.BG});
+                new int[]{Hud.BG_TOP, Hud.BG_MID, Hud.BG});
         frame.setBackground(bg);
         ScrollView scroll = new ScrollView(this);
         scroll.setVerticalScrollBarEnabled(false);
@@ -189,7 +189,7 @@ public abstract class BaseActivity extends Activity {
         return b;
     }
 
-    /** смысл кнопки: ON - выбрано (белое свечение), ACCENT - главное действие, OFF - обычная, DANGER - стоп */
+    /** смысл кнопки: ON - выбрано (оранжевое свечение), ACCENT - главное действие, OFF - обычная, DANGER - стоп */
     protected void tint(Button b, int color) {
         Object tag = b.getTag();
         boolean en = b.isEnabled();
@@ -198,12 +198,12 @@ public abstract class BaseActivity extends Activity {
         int fill, stroke, textColor;
         float glow = 0;
         if (color == ON) {
-            fill = 0x24ffffff;
-            stroke = Hud.WHITE;
-            textColor = Hud.WHITE;
+            fill = 0x2eff8a1f;
+            stroke = Hud.ORANGE;
+            textColor = Hud.ORANGE_LIGHT;
             glow = 6;
         } else if (color == ACCENT) {
-            fill = 0x1f9cc4f0;
+            fill = 0x1f22d3ee;
             stroke = Hud.ICE;
             textColor = Hud.ICE_LIGHT;
         } else if (color == DANGER) {
@@ -234,9 +234,9 @@ public abstract class BaseActivity extends Activity {
         EditText e = new EditText(this);
         e.setSingleLine(true);
         e.setTextColor(TEXT);
-        e.setHintTextColor(0xff5b6573);
+        e.setHintTextColor(0xff4d6b77);
         e.setTextSize(15);
-        e.setBackground(panel(0xcc06080c, Hud.LINE_SOFT, 8, 0));
+        e.setBackground(panel(0xcc04080c, Hud.LINE_SOFT, 8, 0));
         e.setPadding(px(12), px(10), px(12), px(10));
         if (number) e.setInputType(InputType.TYPE_CLASS_NUMBER | (decimal ? InputType.TYPE_NUMBER_FLAG_DECIMAL : 0));
         return e;

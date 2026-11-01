@@ -94,7 +94,7 @@ public final class ConsoleActivity extends BaseActivity {
         root.addView(caption("Журнал"));
         LinearLayout lc = card(root);
         lc.setBackground(panel(0xb3000000, Hud.LINE_SOFT, 10, 0));
-        logText = text(11, 0xffb8c2cf);
+        logText = text(11, 0xffa9c6d0);
         logText.setTypeface(Typeface.MONOSPACE);
         lc.addView(logText);
     }
@@ -246,7 +246,7 @@ public final class ConsoleActivity extends BaseActivity {
                 p.clearShadowLayer();
                 p.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD));
                 p.setTextSize(17 * dp);
-                p.setColor(pg == litPage ? Hud.WHITE : Hud.ICE_LIGHT);
+                p.setColor(pg == litPage ? Hud.ORANGE : Hud.ICE_LIGHT);
                 c.drawText(String.valueOf(pg), 0, y + 18 * dp, p);
                 p.setTypeface(Typeface.DEFAULT);
                 p.setTextSize(11 * dp);
@@ -262,17 +262,17 @@ public final class ConsoleActivity extends BaseActivity {
                     if (cells < n && i == cells - 1) busy = true;
                     p.setStyle(Paint.Style.FILL);
                     if (lit) {
-                        p.setColor(0xccffffff);
-                        p.setShadowLayer(8 * dp, 0, 0, Hud.ICE);
+                        p.setColor(0xccff8a1f);
+                        p.setShadowLayer(8 * dp, 0, 0, Hud.ORANGE);
                     } else {
                         p.clearShadowLayer();
-                        p.setColor(busy ? 0x339cc4f0 : 0x08ffffff);
+                        p.setColor(busy ? 0x3322d3ee : 0x08ffffff);
                     }
                     c.drawRect(x, top, x + cw, bot, p);
                     p.clearShadowLayer();
                     p.setStyle(Paint.Style.STROKE);
                     p.setStrokeWidth(1 * dp);
-                    p.setColor(lit ? Hud.WHITE : busy ? 0x8c9cc4f0 : 0x14ffffff);
+                    p.setColor(lit ? Hud.ORANGE_LIGHT : busy ? 0x8c22d3ee : 0x14ffffff);
                     c.drawRect(x, top, x + cw, bot, p);
                 }
                 if (n > cells) {

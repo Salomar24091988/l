@@ -55,8 +55,9 @@ public final class MainActivity extends BaseActivity {
         title.setTypeface(Typeface.create("sans-serif-light", Typeface.ITALIC));
         SpannableString ts = new SpannableString("LightDancer");
         ts.setSpan(new StyleSpan(Typeface.BOLD_ITALIC), 5, 11, 0);
+        ts.setSpan(new android.text.style.ForegroundColorSpan(Hud.ORANGE), 5, 11, 0);
         title.setText(ts);
-        title.setShadowLayer(14 * dp, 0, 0, 0x889cc4f0);
+        title.setShadowLayer(14 * dp, 0, 0, 0x8822d3ee);
         brand.addView(title);
         head.addView(brand, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         maPill = text(12, Hud.DIM);
@@ -115,7 +116,7 @@ public final class MainActivity extends BaseActivity {
         for (int i = 0; i < 4; i++) {
             LinearLayout t = column();
             t.setGravity(Gravity.CENTER);
-            t.setBackground(panel(Hud.PANEL, 0x479cc4f0, 10, 0));
+            t.setBackground(panel(Hud.PANEL, 0x4722d3ee, 10, 0));
             t.setPadding(0, px(10), 0, px(10));
             TextView n = text(11, DIM);
             n.setText(names[i]);
@@ -259,9 +260,9 @@ public final class MainActivity extends BaseActivity {
         if (!Integer.valueOf(listen ? 1 : 2).equals(listenBtn.getTag())) {
             listenBtn.setTag(listen ? 1 : 2);
             if (listen) listenBtn.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            listenBtn.setBackground(new Hud.Chamfer(listen ? 0x24ffffff : 0x1f9cc4f0, listen ? Hud.WHITE : Hud.ICE,
+            listenBtn.setBackground(new Hud.Chamfer(listen ? 0x2eff8a1f : 0x1f22d3ee, listen ? Hud.ORANGE : Hud.ICE,
                     px(10), px(2), px(listen ? 8 : 0), false));
-            listenBtn.setTextColor(listen ? Hud.WHITE : Hud.ICE_LIGHT);
+            listenBtn.setTextColor(listen ? Hud.ORANGE_LIGHT : Hud.ICE_LIGHT);
         }
 
         float[] v = new float[4];

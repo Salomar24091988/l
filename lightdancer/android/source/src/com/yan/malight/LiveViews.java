@@ -66,9 +66,9 @@ public final class LiveViews {
             p.setStyle(Paint.Style.STROKE);
             p.clearShadowLayer();
             p.setStrokeWidth(1.5f * dp);
-            p.setColor(0x269cc4f0);
+            p.setColor(0x2622d3ee);
             c.drawCircle(cx, cy, R + 8 * dp, p);
-            p.setColor(0x149cc4f0);
+            p.setColor(0x1422d3ee);
             c.drawLine(cx - R, cy, cx + R, cy, p);
             c.drawLine(cx, cy - R, cx, cy + R, p);
 
@@ -76,7 +76,7 @@ public final class LiveViews {
             p.setStrokeWidth(6 * dp);
             p.setStrokeCap(Paint.Cap.ROUND);
             r.set(cx - R, cy - R, cx + R, cy + R);
-            int[] cols = {Hud.ICE, Hud.WHITE, Hud.ICE};
+            int[] cols = {Hud.ICE, Hud.ORANGE, Hud.ICE};
             float[] start = {0, 125, 215}, sweep = {95, 55, 40};
             for (int i = 0; i < 3; i++) {
                 p.setColor(cols[i]);
@@ -87,11 +87,11 @@ public final class LiveViews {
             // внутренний круг
             float inner = R * 0.78f * (fl ? 1.04f : 1f);
             p.setStyle(Paint.Style.FILL);
-            p.setColor(fl ? 0x269cc4f0 : 0x0f9cc4f0);
+            p.setColor(fl ? 0x2622d3ee : 0x0f22d3ee);
             c.drawCircle(cx, cy, inner, p);
             p.setStyle(Paint.Style.STROKE);
             p.setStrokeWidth(1 * dp);
-            p.setColor(0x479cc4f0);
+            p.setColor(0x4722d3ee);
             c.drawCircle(cx, cy, inner, p);
 
             // волна
@@ -105,7 +105,7 @@ public final class LiveViews {
                 wave[i] += (target - wave[i]) * 0.35f;
                 float h = Math.max(3 * dp, wave[i] * maxH * 2);
                 float x = x0 + i * (bw + gap);
-                p.setColor(wave[i] > 0.75f ? Hud.WHITE : Hud.ICE);
+                p.setColor(wave[i] > 0.75f ? Hud.ORANGE : Hud.ICE);
                 p.setShadowLayer(6 * dp, 0, 0, Hud.ICE);
                 c.drawRoundRect(x, cy - h / 2, x + bw, cy + h / 2, bw / 2, bw / 2, p);
             }
@@ -141,10 +141,10 @@ public final class LiveViews {
             for (int i = 0; i < 4; i++) {
                 float x = i * (w + gap);
                 if (i + 1 == cur) {
-                    p.setColor(Hud.WHITE);
-                    p.setShadowLayer((fl ? 12 : 6) * dp, 0, 0, Hud.ICE);
+                    p.setColor(Hud.ORANGE);
+                    p.setShadowLayer((fl ? 12 : 6) * dp, 0, 0, Hud.ORANGE);
                 } else {
-                    p.setColor(i + 1 < cur ? Hud.ICE : 0x269cc4f0);
+                    p.setColor(i + 1 < cur ? Hud.ICE : 0x2622d3ee);
                     p.clearShadowLayer();
                 }
                 c.drawRoundRect(x, y, x + w, y + h, h / 2, h / 2, p);
@@ -184,15 +184,15 @@ public final class LiveViews {
                 v[i] += (t - v[i]) * (t > v[i] ? 0.5f : 0.15f);
                 peak[i] = Math.max(v[i], peak[i] - 0.012f);
                 float h = Math.max(1.5f * dp, v[i] * maxH), x = i * (w + gap);
-                p.setColor(v[i] > 0.7f ? Hud.WHITE : Hud.ICE);
+                p.setColor(v[i] > 0.7f ? Hud.ORANGE : Hud.ICE);
                 c.drawRect(x, base - h, x + w, base, p);
-                p.setColor(0x339cc4f0);
+                p.setColor(0x3322d3ee);
                 c.drawRect(x, base + 2 * dp, x + w, base + 2 * dp + h * 0.22f, p);
                 p.setColor(Hud.ICE_LIGHT);
                 float py = base - peak[i] * maxH - 3 * dp;
                 if (peak[i] > 0.05f) c.drawRect(x, py, x + w, py + 1.5f * dp, p);
             }
-            p.setColor(0x479cc4f0);
+            p.setColor(0x4722d3ee);
             c.drawRect(0, base, getWidth(), base + 1 * dp, p);
             postInvalidateOnAnimation();
         }

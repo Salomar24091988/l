@@ -102,7 +102,7 @@ public final class GeneratorActivity extends BaseActivity {
         r2.addView(status, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 2));
         prog = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         prog.setProgressTintList(android.content.res.ColorStateList.valueOf(Hud.ICE));
-        prog.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0x339cc4f0));
+        prog.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0x3322d3ee));
         LinearLayout.LayoutParams plp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, px(10));
         plp.topMargin = px(8);
         root.addView(prog, plp);

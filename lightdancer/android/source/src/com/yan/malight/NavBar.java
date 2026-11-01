@@ -100,7 +100,7 @@ public final class NavBar extends View {
         for (int i = 0; i < 4; i++) {
             float cx = i < 2 ? side * i + side / 2 : side * 2 + mid + side * (i - 2) + side / 2;
             boolean on = i == current;
-            int col = on ? Hud.WHITE : (down == i ? Hud.ICE_LIGHT : Hud.DIM);
+            int col = on ? Hud.ICE : (down == i ? Hud.ICE_LIGHT : Hud.DIM);
             p.setColor(col);
             if (on) p.setShadowLayer(8 * dp, 0, 0, Hud.ICE);
             else p.clearShadowLayer();
@@ -127,13 +127,13 @@ public final class NavBar extends View {
         path.close();
         p.setStyle(Paint.Style.FILL);
         p.clearShadowLayer();
-        p.setColor(centerOn ? 0xff1a2230 : 0xff0b0e13);
-        if (down == -1) p.setColor(0xff26324a);
+        p.setColor(centerOn ? 0xff2a1806 : 0xff07141c);
+        if (down == -1) p.setColor(0xff3a2208);
         c.drawPath(path, p);
         p.setStyle(Paint.Style.STROKE);
         p.setStrokeWidth(2 * dp);
-        p.setColor(centerOn ? Hud.WHITE : Hud.DIM);
-        if (centerOn) p.setShadowLayer(14 * dp, 0, 0, Hud.ICE);
+        p.setColor(centerOn ? Hud.ORANGE : Hud.DIM);
+        if (centerOn) p.setShadowLayer(14 * dp, 0, 0, Hud.ORANGE);
         c.drawPath(path, p);
         p.setStyle(Paint.Style.FILL);
         Path tri = new Path();
@@ -152,7 +152,7 @@ public final class NavBar extends View {
         p.setTextSize(10 * dp);
         p.setTextAlign(Paint.Align.CENTER);
         p.setFakeBoldText(true);
-        p.setColor(centerOn ? Hud.WHITE : Hud.DIM);
+        p.setColor(centerOn ? Hud.ORANGE_LIGHT : Hud.DIM);
         c.drawText(centerOn ? "АВТОПИЛОТ" : "ПАУЗА", ccx, h - 8 * dp, p);
         p.setFakeBoldText(false);
     }
