@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yan.malight"
-    android:versionCode="2"
-    android:versionName="1.1">
+    android:versionCode="4"
+    android:versionName="1.2.1">
 
     <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="25" />
 
@@ -19,20 +19,40 @@
         android:allowBackup="false"
         android:theme="@android:style/Theme.Material.NoActionBar">
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:label="LightDancer"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:configChanges="orientation|screenSize|keyboardHidden">
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".MainActivity"
+            android:label="LightDancer"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
             android:name=".GeneratorActivity"
-            android:label="Генератор эффектов"
+            android:label="Эффекты"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".ConsoleActivity"
+            android:label="Пульт"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="Настройки"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:configChanges="orientation|screenSize|keyboardHidden" />
