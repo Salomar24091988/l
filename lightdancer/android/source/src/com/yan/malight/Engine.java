@@ -119,6 +119,56 @@ public final class Engine {
     private Map<String, Object> gen;
     public volatile boolean genBusy;
 
+    /** эффекты, созданные генератором на пульте (looks), для «Поставить на экзекьюторы» */
+    @SuppressWarnings("unchecked")
+    public synchronized List<Object> genLink() {
+        Object l = gen().get("link");
+        return l instanceof List ? (List<Object>) l : new ArrayList<Object>();
+    }
+
+    public synchronized void setGenLink(List<Object> looks) {
+        gen().put("link", looks);
+        saveGen();
+    }
+
+    /** поставить эффекты генератора на экзекьюторы fxgenPage…+4 (как «Взять эффекты генератора» на ПК).
+     *  Работает долго - звать не из UI-потока. → итог одной строкой */
+    public String assignGen(com.yan.malight.core.FxJobs j, com.yan.malight.core.FxJobs.Out out) {
+        List<Object> looks = genLink();
+        if (looks.isEmpty()) return "нет эффектов генератора: сначала «Создать на пульте»";
+        int page = settings.fxgenPage > 0 ? settings.fxgenPage : 11;
+        com.yan.malight.core.FxLink.Script sc = com.yan.malight.core.FxLink.assignScript(looks, page, settings);
+        out.log("Ставлю " + sc.assigned.size() + " эффектов генератора на страницы " + page + "-" + (page + 4)
+                + " (" + sc.cmds.size() + " команд)", false);
+        Director d = director;
+        String old = d != null ? d.autoCmd : null;
+        ma.paused = true;
+        genBusy = true;
+        int errors;
+        try {
+            errors = j.send(new ArrayList<>(sc.cmds), com.yan.malight.core.FxGen.defaultConfig(), 0.05, out);
+        } catch (Exception e) {
+            out.log("Не поставил: " + e.getMessage(), true);
+            return "нет связи с пультом";
+        } finally {
+            ma.paused = false;
+            genBusy = false;
+        }
+        if (j.stop) return "остановлено";
+        settings.fxgenAssigned = com.yan.malight.core.Json.write(sc.assigned);
+        settings.fxgenOn = true;
+        save();
+        if (d != null) {
+            if (old != null && settings.enabled) ma.send("Off Executor " + old.replace("-", " Thru "), null);
+            d.forgetState();
+            d.resetSent();
+        }
+        String msg = "на экзекьюторах " + page + "-" + (page + 4) + ": " + sc.assigned.size() + " эффектов"
+                + (errors > 0 ? ", ошибок " + errors : "");
+        log("Генератор → автопилот: " + msg);
+        return msg;
+    }
+
     // ------------------------------------------------------------------ журнал
     public void log(String text) {
         synchronized (log) {

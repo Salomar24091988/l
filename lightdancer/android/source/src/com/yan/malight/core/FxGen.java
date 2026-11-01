@@ -366,6 +366,8 @@ public final class FxGen {
         public final List<String> cmds = new ArrayList<>();
         public final List<Made> report = new ArrayList<>();
         public final List<String> warnings = new ArrayList<>();
+        /** копии противофазы: эффект → {номер копии, сдвиг фазы} */
+        public final Map<Long, long[]> alts = new java.util.LinkedHashMap<>();
     }
 
     /** build(cfg, only, group_ids, make_macros) */

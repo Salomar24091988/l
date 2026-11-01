@@ -49,13 +49,13 @@ public final class GeneratorActivity extends BaseActivity {
         CAT_TITLES.put("combo", "Комбо");
     }
 
-    private Engine engine;
     private final Handler ui = new Handler();
     private Map<String, Object> st;
     private LinearLayout groupsBox, tplBox;
     private TextView summary, status, logText;
     private ProgressBar prog;
-    private Button pullBtn, sendBtn, stopBtn;
+    private Button pullBtn, sendBtn, stopBtn, linkBtn;
+    private TextView linkInfo;
     private final Map<String, Button> tplBtns = new LinkedHashMap<>();
     private final Map<String, EditText> optFields = new LinkedHashMap<>();
     private final Map<String, Button> optToggles = new LinkedHashMap<>();
@@ -65,49 +65,47 @@ public final class GeneratorActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        engine = Engine.get(this);
         st = engine.gen();
-        getWindow().setStatusBarColor(BG);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-        ScrollView scroll = new ScrollView(this);
-        scroll.setBackgroundColor(BG);
-        LinearLayout root = column();
-        root.setPadding(px(12), px(10), px(12), px(24));
-        scroll.addView(root);
-        setContentView(scroll);
-
-        TextView title = text(22, TEXT);
-        title.setTypeface(Typeface.DEFAULT_BOLD);
-        title.setText("Генератор эффектов MA2");
-        root.addView(title);
+        LinearLayout root = shell(1);
+        title(root, "Генератор эффектов MA2", "Эффекты");
         TextView sub = text(13, DIM);
-        sub.setText("Те же шаблоны и команды, что генератор LightDancer на ПК. Эффекты в пул Effects с 1."
-                + "<номер>, макросы скорости для SpecialMaster 3.x.");
+        sub.setText("Те же шаблоны и команды, что генератор LightDancer на ПК. После «Создать на пульте» "
+                + "поставьте эффекты на экзекьюторы - автопилот будет играть их.");
+        sub.setPadding(0, px(4), 0, 0);
         root.addView(sub);
 
         // действия
         LinearLayout r1 = row(root);
-        pullBtn = button(r1, "⇩ Группы с пульта", new View.OnClickListener() {
+        pullBtn = button(r1, "Группы с пульта", new View.OnClickListener() {
             @Override public void onClick(View v) { pull(); }
         });
-        sendBtn = button(r1, "▶ Создать на пульте", new View.OnClickListener() {
+        sendBtn = button(r1, "Создать на пульте", new View.OnClickListener() {
             @Override public void onClick(View v) { confirmSend(); }
         });
-        tint(sendBtn, ON);
+        LinearLayout r1b = row(root);
+        linkBtn = button(r1b, "На экзекьюторы " + pages(), new View.OnClickListener() {
+            @Override public void onClick(View v) { confirmAssign(); }
+        });
+        linkInfo = text(12, DIM);
+        linkInfo.setPadding(px(2), px(4), 0, 0);
+        root.addView(linkInfo);
         LinearLayout r2 = row(root);
-        stopBtn = button(r2, "■ Стоп", new View.OnClickListener() {
+        stopBtn = button(r2, "Стоп", new View.OnClickListener() {
             @Override public void onClick(View v) {
                 FxJobs j = job;
                 if (j != null) j.stop = true;
             }
         });
-        tint(stopBtn, 0xff8e1b1b);
         status = text(14, TEXT);
         status.setPadding(px(8), 0, 0, 0);
         status.setGravity(Gravity.CENTER_VERTICAL);
         r2.addView(status, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 2));
         prog = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-        root.addView(prog, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, px(10)));
+        prog.setProgressTintList(android.content.res.ColorStateList.valueOf(Hud.ICE));
+        prog.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(0x339cc4f0));
+        LinearLayout.LayoutParams plp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, px(10));
+        plp.topMargin = px(8);
+        root.addView(prog, plp);
         summary = text(15, TEXT);
         summary.setPadding(0, px(6), 0, 0);
         root.addView(summary);
@@ -250,7 +248,7 @@ public final class GeneratorActivity extends BaseActivity {
         groupsBox.removeAllViews();
         if (groups().isEmpty()) {
             TextView t = text(14, DIM);
-            t.setText("Групп пока нет. Пульт должен быть включён в настройках главного экрана (IP, логин).");
+            t.setText("Групп пока нет. Нажмите «Группы с пульта» (IP и логин - во вкладке Настройки).");
             groupsBox.addView(t);
             return;
         }
@@ -319,10 +317,7 @@ public final class GeneratorActivity extends BaseActivity {
         l.setText("Амплитуда движения, °");
         l.setGravity(Gravity.CENTER_VERTICAL);
         sz.addView(l, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 2));
-        final EditText e = new EditText(this);
-        e.setSingleLine(true);
-        e.setTextColor(TEXT);
-        e.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        final EditText e = field(true, true);
         e.setText(Py.str(g.containsKey("size") ? g.get("size") : 20L));
         e.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -428,10 +423,7 @@ public final class GeneratorActivity extends BaseActivity {
         l.setText(label);
         l.setGravity(Gravity.CENTER_VERTICAL);
         r.addView(l, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 2));
-        final EditText e = new EditText(this);
-        e.setSingleLine(true);
-        e.setTextColor(TEXT);
-        e.setInputType(InputType.TYPE_CLASS_NUMBER | (decimal ? InputType.TYPE_NUMBER_FLAG_DECIMAL : 0));
+        final EditText e = field(true, decimal);
         e.setText(opt(key, def));
         e.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -495,17 +487,75 @@ public final class GeneratorActivity extends BaseActivity {
     private void setBusy(boolean busy, String text) {
         pullBtn.setEnabled(!busy);
         sendBtn.setEnabled(!busy);
+        boolean hasLink = !engine.genLink().isEmpty();
+        linkBtn.setEnabled(!busy && hasLink);
         stopBtn.setEnabled(busy);
-        tint(pullBtn, busy ? OFF : ACCENT);
-        tint(sendBtn, busy ? OFF : ON);
-        tint(stopBtn, busy ? 0xff8e1b1b : OFF);
+        tint(pullBtn, OFF);
+        tint(sendBtn, ACCENT);
+        tint(linkBtn, ACCENT);
+        tint(stopBtn, busy ? DANGER : OFF);
         status.setText(text);
+        paintLink();
+    }
+
+    private String pages() {
+        int p = engine.settings.fxgenPage > 0 ? engine.settings.fxgenPage : 11;
+        return p + "-" + (p + 4);
+    }
+
+    private void paintLink() {
+        linkBtn.setText("На экзекьюторы " + pages());
+        int n = engine.genLink().size();
+        Director d = engine.director;
+        boolean on = d != null && d.genActive();
+        linkInfo.setText(n == 0 ? "Эффектов генератора на пульте ещё нет."
+                : "Создано на пульте: " + n + " эффектов. " + (on ? "Автопилот играет эффекты генератора."
+                : engine.settings.fxgenAssigned.isEmpty() ? "Поставьте их на экзекьюторы." : "Автопилот сейчас играет стандарт (вкладка Пульт)."));
+    }
+
+    private void confirmAssign() {
+        if (engine.genLink().isEmpty()) {
+            toast("Сначала «Создать на пульте»");
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("На экзекьюторы " + pages())
+                .setMessage("Поставить " + engine.genLink().size() + " эффектов генератора на страницы " + pages()
+                        + " (Dimmer, Position, Color, Strobe, Комбо)?\n\nЭкзекьюторы на этих страницах перезапишутся. "
+                        + "Потом автопилот играет эти эффекты вместо стандартных.")
+                .setPositiveButton("Поставить", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface di, int w) { assign(); }
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void assign() {
+        final FxJobs j = newJob();
+        if (j == null) return;
+        job = j;
+        setBusy(true, "ставлю на экзекьюторы…");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String m = engine.assignGen(j, out);
+                out.log(m, false);
+                ui.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        job = null;
+                        setBusy(false, m);
+                    }
+                });
+            }
+        }, "fx-assign").start();
     }
 
     private FxJobs newJob() {
         Settings s = engine.settings;
         if (s.host.trim().isEmpty()) {
-            toast("Впишите IP пульта в настройках главного экрана");
+            toast("Впишите IP пульта во вкладке Настройки");
             return null;
         }
         return new FxJobs(s.host.trim(), s.port > 0 ? s.port : 30000, s.user.trim(), s.password);
@@ -623,6 +673,7 @@ public final class GeneratorActivity extends BaseActivity {
                 try {
                     int errors = j.send(new ArrayList<>(r.cmds), cfg, delay, out);
                     msg = j.stop ? "остановлено" : "готово, ошибок " + errors;
+                    if (!j.stop) engine.setGenLink(com.yan.malight.core.FxLink.looks(r));
                     out.log("Готово. Эффектов " + r.report.size() + ", ошибок: " + errors, errors > 0);
                 } catch (Exception e) {
                     msg = "отправка прервана";
@@ -637,11 +688,13 @@ public final class GeneratorActivity extends BaseActivity {
                     }
                 }
                 final String m = msg;
+                final boolean ok = !j.stop && msg.startsWith("готово");
                 ui.post(new Runnable() {
                     @Override
                     public void run() {
                         job = null;
                         setBusy(false, m);
+                        if (ok && !isFinishing()) confirmAssign();
                     }
                 });
             }
