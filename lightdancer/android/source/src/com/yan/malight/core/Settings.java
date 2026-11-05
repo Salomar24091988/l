@@ -25,6 +25,11 @@ public final class Settings {
     public String execFlow = "";         // page.7-9
     public String execSpark = "";        // page.10-12
 
+    // эффекты генератора (страницы 11-15), как ma_fxlink на ПК
+    public boolean fxgenOn = true;       // автопилот играет эффекты генератора вместо page.1-12
+    public int fxgenPage = 11;
+    public String fxgenAssigned = "";    // JSON: что поставлено на экзекьюторы
+
     // автопилот
     public boolean autopilot = true;
     public boolean chaseOn = true;       // круговой chase page.13/14 на разгонах

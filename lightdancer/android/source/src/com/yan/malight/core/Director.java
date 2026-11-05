@@ -78,8 +78,45 @@ public final class Director implements Analyzer.Listener {
     // ------------------------------------------------------------------ раскладка
     String ex(int n) { return s.page + "." + n; }
 
+    // эффекты генератора
+    private String poolsSrc;
+    private Map<String, List<Map<String, Object>>> pools = new HashMap<>();
+    private String lookName;
+    public volatile boolean usingGen;
+
+    /** пулы эффектов генератора по группам автопилота; пусто - генератор не подключён */
+    @SuppressWarnings("unchecked")
+    public synchronized Map<String, List<Map<String, Object>>> genPools() {
+        String js = s.fxgenAssigned;
+        if (js == null) js = "";
+        if (!js.equals(poolsSrc)) {
+            poolsSrc = js;
+            Map<String, List<Map<String, Object>>> p = new HashMap<>();
+            try {
+                if (!js.trim().isEmpty()) {
+                    Object o = Json.parse(js);
+                    if (o instanceof List && !((List<Object>) o).isEmpty()) p = FxLink.pools((List<Object>) o);
+                }
+            } catch (RuntimeException ignored) {
+            }
+            pools = p;
+        }
+        return pools;
+    }
+
+    public boolean genActive() { return s.fxgenOn && !genPools().isEmpty(); }
+
     String fxExec(String g, int variant) {
+        lookName = null;
         if (g.equals("круг")) return ex(13 + variant);
+        if (genActive()) {
+            List<Map<String, Object>> pool = genPools().get(g);
+            if (pool != null && !pool.isEmpty()) {
+                Map<String, Object> look = pool.get((variant + seed * 3) % pool.size());
+                lookName = String.valueOf(look.get("name"));
+                return String.valueOf(look.get("exec"));
+            }
+        }
         int gi = indexOf(GROUPS, g);
         String own = new String[]{s.execPulse, s.execRun, s.execFlow, s.execSpark}[gi].trim();
         if (!own.isEmpty()) {
@@ -94,15 +131,21 @@ public final class Director implements Analyzer.Listener {
         return 0;
     }
 
-    static boolean isExec(String t) { return t != null && t.trim().matches("\\d+(\\.\\d+)?"); }
+    static boolean isExec(String t) { return t != null && t.trim().matches("\\d+(\\.\\d+)?(\\s*-\\s*\\d+\\.\\d+)?"); }
+
+    /** «11.1-11.3» → «11.1 Thru 11.3» */
+    static String execList(String v) {
+        String[] ab = v.trim().split("\\s*-\\s*");
+        return ab.length == 2 ? ab[0] + " Thru " + ab[1] : v.trim();
+    }
 
     void go(String v) {
         if (v == null) return;
-        send(isExec(v) ? "Go Executor " + v.trim() : v);
+        send(isExec(v) ? "Go Executor " + execList(v) : v);
     }
 
     void off(String v) {
-        if (isExec(v)) send("Off Executor " + v.trim());
+        if (isExec(v)) send("Off Executor " + execList(v));
     }
 
     void switchTo(String now, String old) {
@@ -143,7 +186,8 @@ public final class Director implements Analyzer.Listener {
         String g = choice[0];
         int variant = Integer.parseInt(choice[1]);
         String v = fxExec(g, variant);
-        String name = g.equals("круг") ? CHASE[variant] : VARIANTS[indexOf(GROUPS, g)][variant];
+        String name = lookName != null ? lookName : g.equals("круг") ? CHASE[variant] : VARIANTS[indexOf(GROUPS, g)][variant];
+        usingGen = lookName != null;
         autoWhy = g + " · " + name + " (" + v + ") - " + choice[2];
         if (!v.equals(autoCmd)) {
             switchTo(v, autoCmd);
@@ -401,6 +445,9 @@ public final class Director implements Analyzer.Listener {
     /** все эффекты автопилота выключить (page.1-50) */
     public synchronized void stopAll() {
         send("Off Executor " + ex(1) + " Thru " + ex(50));
+        if (!genPools().isEmpty())
+            for (int i = 0; i < FxLink.PAGE_CATS.length; i++)
+                send("Off Executor " + (s.fxgenPage + i) + ".1 Thru " + (s.fxgenPage + i) + ".100");
         autoCmd = null;
         colorCmd = null;
         group = null;

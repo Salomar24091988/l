@@ -378,6 +378,7 @@ public final class Patch {
             }
             if (hits[0] > 0) {
                 extra.addAll(block);
+                r.alts.put(e.effect, new long[]{e.effect + shift, Math.round(off)});
                 copies++;
             }
         }
